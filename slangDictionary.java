@@ -9,13 +9,16 @@ class ArrrayList<T> {
 }
 
 public class slangDictionary {
+    private static TreeMap<String, ArrayList<String>> sourceDictionary = new TreeMap<>();
     private static TreeMap<String, ArrayList<String>> dictionary = new TreeMap<>();
     private static TreeMap<String, ArrayList<String>> historyDictionary = new TreeMap<>();
 
     public static void main(String[] args) {
-        dictionary = readDataFromFile();
+        sourceDictionary = readDataFromFile();
+        dictionary.putAll(sourceDictionary);;
         dictionary = addSlangWord(dictionary);
-        dictionary = addSlangWord(dictionary);
+        showTreeMap(dictionary);
+        dictionary = resetDictionary();
         showTreeMap(dictionary);
     }
 
@@ -205,28 +208,39 @@ public class slangDictionary {
         Scanner scan = new Scanner(System.in);
         if (searchBySlang(dictionary, duplicatedDictionary, slang)) {
             for (String slangWord : duplicatedDictionary.keySet()) {
-                ArrayList<String> definition = new ArrayList<>();
-                int numberOfDef = 0;
+                int choose = -1;
+                System.out.println("Do you want to edit " + slangWord + " ?");
+                System.out.println("1. Yes");
+                System.out.println("2. No");
                 do {
-                    System.out.print("Input number of definitions for editting: ");
-                    numberOfDef = scan.nextInt();
-                    scan.nextLine();
-                } while (numberOfDef <= 0);
+                    System.out.print("Input your choice: ");
+                    choose = scan.nextInt();
+                } while (choose != 1 && choose != 2);
 
-                if (numberOfDef == 1) {
-                    System.out.print("Input definition for editting: ");
-                    String def = scan.nextLine();
-                    definition.add(def);
-                } else {
-                    for (int i = 0; i < numberOfDef; i++) {
-                        System.out.print("Input definition " + (i + 1) + " for editting: ");
+                if (choose == 1) {
+                    ArrayList<String> definition = new ArrayList<>();
+                    int numberOfDef = 0;
+                    do {
+                        System.out.print("Input number of definitions for editting: ");
+                        numberOfDef = scan.nextInt();
+                        scan.nextLine();
+                    } while (numberOfDef <= 0);
+
+                    if (numberOfDef == 1) {
+                        System.out.print("Input definition for editting: ");
                         String def = scan.nextLine();
                         definition.add(def);
+                    } else {
+                        for (int i = 0; i < numberOfDef; i++) {
+                            System.out.print("Input definition " + (i + 1) + " for editting: ");
+                            String def = scan.nextLine();
+                            definition.add(def);
+                        }
                     }
-                }
 
-                dictionary.put(slangWord, definition);
-                System.out.println("");
+                    dictionary.put(slangWord, definition);
+                    System.out.println("");
+                }
             }
         } else {
             System.out.println("This slang does not exist in the dictionary");
@@ -406,5 +420,9 @@ public class slangDictionary {
             System.out.println("");
             return dictionary;
         }
+    }
+
+    private static TreeMap<String, ArrayList<String>> resetDictionary() {
+        return sourceDictionary;
     }
 }

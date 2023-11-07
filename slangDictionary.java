@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.Scanner;
 import java.util.TreeMap;
 
@@ -15,11 +16,9 @@ public class slangDictionary {
 
     public static void main(String[] args) {
         sourceDictionary = readDataFromFile();
-        dictionary.putAll(sourceDictionary);;
-        dictionary = addSlangWord(dictionary);
-        showTreeMap(dictionary);
-        dictionary = resetDictionary();
-        showTreeMap(dictionary);
+        dictionary.putAll(sourceDictionary);
+        TreeMap<String, ArrayList<String>> rand = randomSlang(dictionary);
+        showTreeMap(rand);
     }
 
     private static TreeMap<String, ArrayList<String>> readDataFromFile() {
@@ -171,28 +170,39 @@ public class slangDictionary {
         Scanner scan = new Scanner(System.in);
         if (searchBySlang(dictionary, duplicatedDictionary)) {
             for (String slangWord : duplicatedDictionary.keySet()) {
-                ArrayList<String> definition = new ArrayList<>();
-                int numberOfDef = 0;
+                int choose = -1;
+                System.out.println("Do you want to edit " + slangWord + " ?");
+                System.out.println("1. Yes");
+                System.out.println("2. No");
                 do {
-                    System.out.print("Input number of definitions for editting: ");
-                    numberOfDef = scan.nextInt();
-                    scan.nextLine();
-                } while (numberOfDef <= 0);
+                    System.out.print("Input your choice: ");
+                    choose = scan.nextInt();
+                } while (choose != 1 && choose != 2);
 
-                if (numberOfDef == 1) {
-                    System.out.print("Input definition for editting: ");
-                    String def = scan.nextLine();
-                    definition.add(def);
-                } else {
-                    for (int i = 0; i < numberOfDef; i++) {
-                        System.out.print("Input definition " + (i + 1) + " for editting: ");
+                if (choose == 1) {
+                    ArrayList<String> definition = new ArrayList<>();
+                    int numberOfDef = 0;
+                    do {
+                        System.out.print("Input number of definitions for editting: ");
+                        numberOfDef = scan.nextInt();
+                        scan.nextLine();
+                    } while (numberOfDef <= 0);
+
+                    if (numberOfDef == 1) {
+                        System.out.print("Input definition for editting: ");
                         String def = scan.nextLine();
                         definition.add(def);
+                    } else {
+                        for (int i = 0; i < numberOfDef; i++) {
+                            System.out.print("Input definition " + (i + 1) + " for editting: ");
+                            String def = scan.nextLine();
+                            definition.add(def);
+                        }
                     }
-                }
 
-                dictionary.put(slangWord, definition);
-                System.out.println("");
+                    dictionary.put(slangWord, definition);
+                    System.out.println("");
+                }
             }
         } else {
             System.out.println("This slang does not exist in the dictionary");
@@ -359,7 +369,7 @@ public class slangDictionary {
                 }
                 case 2: {
                     if (duplicatedDictionary.size() == 1) {
-                        String tempSlang = duplicatedDictionary.firstKey() + "__ver1";
+                        String tempSlang = duplicatedDictionary.firstKey().split("__")[0] + "__ver1";
                         ArrayList<String> tempDef = duplicatedDictionary.get(duplicatedDictionary.firstKey());
 
                         dictionary = removeSlangWord(dictionary, slang);
@@ -424,5 +434,27 @@ public class slangDictionary {
 
     private static TreeMap<String, ArrayList<String>> resetDictionary() {
         return sourceDictionary;
+    }
+
+    private static TreeMap<String, ArrayList<String>> randomSlang(TreeMap<String, ArrayList<String>> dictionary) {
+        int size = dictionary.size();
+        Random rand = new Random();
+        int randomNumber = rand.nextInt(size);
+        int i = 0;
+        TreeMap<String, ArrayList<String>> randomSlang = new TreeMap<>();
+
+        for (String slang : dictionary.keySet()) {
+            if (i == randomNumber) {
+                String slangWord = slang;
+                ArrayList<String> definition = new ArrayList<>();
+                definition = (ArrayList<String>)dictionary.get(slang).clone();
+                randomSlang.put(slangWord, definition);
+                break;
+            } else {
+                i++;
+            }
+        }
+
+        return randomSlang;
     }
 }

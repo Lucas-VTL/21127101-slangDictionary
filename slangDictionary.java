@@ -17,8 +17,13 @@ public class slangDictionary {
     public static void main(String[] args) {
         sourceDictionary = readDataFromFile();
         dictionary.putAll(sourceDictionary);
-        TreeMap<String, ArrayList<String>> rand = randomSlang(dictionary);
-        showTreeMap(rand);
+        do {
+            if (quizByDef(dictionary)) {
+                System.out.println("Your answer is correct");
+            } else {
+                System.out.println("Your answer is incorrect");
+            }
+        } while (true);
     }
 
     private static TreeMap<String, ArrayList<String>> readDataFromFile() {
@@ -446,8 +451,7 @@ public class slangDictionary {
         for (String slang : dictionary.keySet()) {
             if (i == randomNumber) {
                 String slangWord = slang;
-                ArrayList<String> definition = new ArrayList<>();
-                definition = (ArrayList<String>)dictionary.get(slang).clone();
+                ArrayList<String> definition = new ArrayList<>(dictionary.get(slang));
                 randomSlang.put(slangWord, definition);
                 break;
             } else {
@@ -456,5 +460,102 @@ public class slangDictionary {
         }
 
         return randomSlang;
+    }
+
+    private static boolean quizBySlang(TreeMap<String, ArrayList<String>> dictionary) {
+        Scanner scan = new Scanner(System.in);
+        boolean check = false;
+
+        TreeMap<String, ArrayList<String>> answerSlang = new TreeMap<>();
+        TreeMap<String, ArrayList<String>> wrongSlang_1 = new TreeMap<>();
+        TreeMap<String, ArrayList<String>> wrongSlang_2 = new TreeMap<>();
+        TreeMap<String, ArrayList<String>> wrongSlang_3 = new TreeMap<>();
+
+        answerSlang = randomSlang(dictionary);
+        wrongSlang_1 = randomSlang(dictionary);
+        wrongSlang_2 = randomSlang(dictionary);
+        wrongSlang_3 = randomSlang(dictionary);
+
+        TreeMap<String, ArrayList<String>> mixSlang = new TreeMap<>();
+        mixSlang.put(answerSlang.firstKey(), answerSlang.get(answerSlang.firstKey()));
+        mixSlang.put(wrongSlang_1.firstKey(), wrongSlang_1.get(wrongSlang_1.firstKey()));
+        mixSlang.put(wrongSlang_2.firstKey(), wrongSlang_2.get(wrongSlang_2.firstKey()));
+        mixSlang.put(wrongSlang_3.firstKey(), wrongSlang_3.get(wrongSlang_3.firstKey()));
+
+        int i = 0;
+        int j = 1;
+        int choose = -1;
+
+        System.out.println("What is the definitions of this slang: " + answerSlang.firstKey() + " ?");
+        for (String slang : mixSlang.keySet()) {
+            System.out.println((i + 1) + ". "
+                    + mixSlang.get(slang).toString().replace("[", "").replace("]", ""));
+            i++;
+        }
+
+        do {
+            System.out.print("Input your choice: ");
+            choose = scan.nextInt();
+        } while (choose != 1 && choose != 2 && choose != 3 && choose != 4);
+
+        for (String slang : mixSlang.keySet()) {
+            if (j == choose) {
+                if (slang.equals(answerSlang.firstKey())) {
+                    check = true;
+                    break;
+                }
+            }
+            j++;
+        }
+
+        return check;
+    }
+
+    private static boolean quizByDef(TreeMap<String, ArrayList<String>> dictionary) {
+        Scanner scan = new Scanner(System.in);
+        boolean check = false;
+
+        TreeMap<String, ArrayList<String>> answerSlang = new TreeMap<>();
+        TreeMap<String, ArrayList<String>> wrongSlang_1 = new TreeMap<>();
+        TreeMap<String, ArrayList<String>> wrongSlang_2 = new TreeMap<>();
+        TreeMap<String, ArrayList<String>> wrongSlang_3 = new TreeMap<>();
+
+        answerSlang = randomSlang(dictionary);
+        wrongSlang_1 = randomSlang(dictionary);
+        wrongSlang_2 = randomSlang(dictionary);
+        wrongSlang_3 = randomSlang(dictionary);
+
+        TreeMap<String, ArrayList<String>> mixSlang = new TreeMap<>();
+        mixSlang.put(answerSlang.firstKey(), answerSlang.get(answerSlang.firstKey()));
+        mixSlang.put(wrongSlang_1.firstKey(), wrongSlang_1.get(wrongSlang_1.firstKey()));
+        mixSlang.put(wrongSlang_2.firstKey(), wrongSlang_2.get(wrongSlang_2.firstKey()));
+        mixSlang.put(wrongSlang_3.firstKey(), wrongSlang_3.get(wrongSlang_3.firstKey()));
+
+        int i = 0;
+        int j = 1;
+        int choose = -1;
+
+        System.out.println("What is the slang of this definition: " + answerSlang.get(answerSlang.firstKey()) + " ?");
+        for (String slang : mixSlang.keySet()) {
+            System.out.println((i + 1) + ". " + slang);
+            i++;
+        }
+
+        do {
+            System.out.print("Input your choice: ");
+            choose = scan.nextInt();
+        } while (choose != 1 && choose != 2 && choose != 3 && choose != 4);
+
+        for (String slang : mixSlang.keySet()) {
+            if (j == choose) {
+                if (mixSlang.get(slang).equals(answerSlang.get(answerSlang.firstKey()))) {
+                    check = true;
+                    break;
+                }
+            }
+            j++;
+        }
+
+        return check;
     }
 }

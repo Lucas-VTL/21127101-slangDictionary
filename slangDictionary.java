@@ -1,4 +1,3 @@
-package Function;
 import java.io.BufferedReader;
 import java.io.File;
 import java.nio.file.Files;
@@ -6,25 +5,43 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.TreeMap;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 class ArrrayList<T> {
 }
 
 public class slangDictionary {
-    private static TreeMap<String, ArrayList<String>> sourceDictionary = new TreeMap<>();
-    private static TreeMap<String, ArrayList<String>> dictionary = new TreeMap<>();
-    private static TreeMap<String, ArrayList<String>> historyDictionary = new TreeMap<>();
+    public static TreeMap<String, ArrayList<String>> sourceDictionary;
+    public static TreeMap<String, ArrayList<String>> dictionary;
+    public static TreeMap<String, ArrayList<String>> historyDictionary;
 
-    public static void main(String[] args) {
+    slangDictionary() {
+        sourceDictionary = new TreeMap<>();
+        dictionary = new TreeMap<>();
+        historyDictionary = new TreeMap<>();
+
         sourceDictionary = readDataFromFile();
         dictionary.putAll(sourceDictionary);
-        do {
-            if (quizByDef(dictionary)) {
-                System.out.println("Your answer is correct");
-            } else {
-                System.out.println("Your answer is incorrect");
-            }
-        } while (true);
+    }
+
+    public static TreeMap<String, ArrayList<String>> getSourceDictionary() {
+        return sourceDictionary;
+    }
+
+    public static TreeMap<String, ArrayList<String>> getDictionary() {
+        return dictionary;
+    }
+
+    public static TreeMap<String, ArrayList<String>> getHistoryDictionary() {
+        return historyDictionary;
+    }
+
+    public static void main(String[] args) {
+        new menu();
+        new slangDictionary();
     }
 
     private static TreeMap<String, ArrayList<String>> readDataFromFile() {
@@ -558,5 +575,334 @@ public class slangDictionary {
         }
 
         return check;
+    }
+}
+
+class menu extends JFrame {
+    private static JFrame frame;
+    private static Color bgColor = new Color(227, 197, 237);
+    private static JPanel mainPanel;
+    private static CardLayout cardLayout;
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new menu());
+    }
+
+    menu() {
+        frame = new JFrame("Slang Dictionary Application");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(800, 800);
+        frame.getContentPane().setBackground(bgColor);
+        frame.setLocationRelativeTo(null);
+
+        mainPanel = new JPanel();
+        cardLayout = new CardLayout();
+        mainPanel.setLayout(cardLayout);
+
+        JPanel menuPage = createMenuPage();
+        mainPanel.add(menuPage, "menu");
+        frame.add(mainPanel);
+
+        JPanel slangSearchPage = createFunctionPage("Searching by slang");
+        mainPanel.add(slangSearchPage, "slangSearchPage");
+
+        JPanel defSearchPage = createFunctionPage("Searching by definitions");
+        mainPanel.add(defSearchPage, "defSearchPage");
+
+        JPanel viewHistoryPage = createFunctionPage("Searching history");
+        mainPanel.add(viewHistoryPage, "viewHistoryPage");
+
+        JPanel addPage = createFunctionPage("Adding new slang to dictionary");
+        mainPanel.add(addPage, "addPage");
+
+        JPanel removePage = createFunctionPage("Remove slang from dictionary");
+        mainPanel.add(removePage, "removePage");
+
+        JPanel editPage = createFunctionPage("Edit slang definitions");
+        mainPanel.add(editPage, "editPage");
+
+        JPanel resetPage = createFunctionPage("Reset to original dictionary");
+        mainPanel.add(resetPage, "resetPage");
+
+        JPanel randomSlangPage = createFunctionPage("On this day slang word");
+        mainPanel.add(randomSlangPage, "randomSlangPage");
+
+        JPanel quizOnSlangPage = createFunctionPage("Quiz on slang");
+        mainPanel.add(quizOnSlangPage, "quizOnSlangPage");
+
+        JPanel quizOnDefPage = createFunctionPage("Quiz on definitions");
+        mainPanel.add(quizOnDefPage, "quizOnDefPage");
+
+        frame.setVisible(true);
+    }
+
+    private static JPanel createMenuPage() {
+        JPanel menuPanel = new JPanel(new BorderLayout());
+
+        JLabel header = createHeader();
+        JPanel searchPanel = createSearchPanel();
+        JPanel historyPanel = createHistoryPanel();
+        JPanel interactPanel = createInteractPanel();
+        JPanel resetPanel = createResetPanel();
+        JPanel randomPanel = createRandomPanel();
+
+        JPanel contentPanel = new JPanel(new GridLayout(6, 1));
+
+        contentPanel.add(header);
+        contentPanel.add(searchPanel);
+        contentPanel.add(historyPanel);
+        contentPanel.add(interactPanel);
+        contentPanel.add(resetPanel);
+        contentPanel.add(randomPanel);
+
+        menuPanel.add(contentPanel, BorderLayout.CENTER);
+        frame = createBorder(menuPanel);
+
+        return menuPanel;
+    }
+
+    private static JFrame createBorder(JPanel panel) {
+        JLabel top = new JLabel();
+        top.setPreferredSize(new Dimension(800, 50));
+        JLabel left = new JLabel();
+        left.setPreferredSize(new Dimension(50, 800));
+        JLabel right = new JLabel();
+        right.setPreferredSize(new Dimension(50, 800));
+        JLabel bottom = new JLabel();
+        bottom.setPreferredSize(new Dimension(800, 100));
+
+        frame.add(top, BorderLayout.NORTH);
+        frame.add(left, BorderLayout.WEST);
+        frame.add(right, BorderLayout.EAST);
+        frame.add(bottom, BorderLayout.SOUTH);
+
+        return frame;
+    }
+
+    private static JLabel createHeader() {
+        JLabel header = new JLabel("Slang Dictionary", JLabel.CENTER);
+        header.setFont(new Font("Times New Roman", Font.BOLD, 35));
+        header.setBackground(bgColor);
+        header.setOpaque(true);
+        header.setForeground(Color.BLUE);
+
+        return header;
+    }
+
+    private static JPanel createSearchPanel() {
+        JPanel searchPanel = new JPanel();
+        searchPanel.setBackground(bgColor);
+
+        JLabel title = new JLabel("Searching");
+        title.setFont(new Font("Times New Roman", Font.ITALIC, 25));
+        title.setForeground(Color.BLUE);
+        JLabel space = new JLabel("");
+        JButton slangSearch = new JButton("Search by slang");
+        slangSearch.setFont(new Font("Times New Roman", Font.BOLD, 20));
+        JButton defSearch = new JButton("Search by definition");
+        defSearch.setFont(new Font("Times New Roman", Font.BOLD, 20));
+
+        searchPanel.add(title);
+        searchPanel.add(space);
+        searchPanel.add(slangSearch);
+        searchPanel.add(defSearch);
+
+        GridLayout layout = new GridLayout(2, 2);
+        layout.setHgap(10);
+        searchPanel.setLayout(layout);
+
+        slangSearch.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(mainPanel, "slangSearchPage");
+            }
+        });
+
+        defSearch.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(mainPanel, "defSearchPage");
+            }
+        });
+
+        return searchPanel;
+    }
+
+    private static JPanel createHistoryPanel() {
+        JPanel historyPanel = new JPanel();
+        historyPanel.setBackground(bgColor);
+
+        JLabel title = new JLabel("View history search");
+        title.setFont(new Font("Times New Roman", Font.ITALIC, 25));
+        title.setForeground(Color.BLUE);
+        JLabel space1 = new JLabel("");
+        JLabel space2 = new JLabel("");
+        JLabel space3 = new JLabel("");
+        JButton history = new JButton("History searching");
+        history.setFont(new Font("Times New Roman", Font.BOLD, 20));
+
+        historyPanel.add(title);
+        historyPanel.add(space1);
+        historyPanel.add(space2);
+        historyPanel.add(space3);
+        historyPanel.add(history);
+
+        GridLayout layout = new GridLayout(2, 3);
+        historyPanel.setLayout(layout);
+
+        history.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(mainPanel, "viewHistoryPage");
+            }
+        });
+
+        return historyPanel;
+    }
+
+    private static JPanel createInteractPanel() {
+        JPanel interactPanel = new JPanel();
+        interactPanel.setBackground(bgColor);
+
+        JLabel title = new JLabel("Interact with slangs");
+        title.setFont(new Font("Times New Roman", Font.ITALIC, 25));
+        title.setForeground(Color.BLUE);
+        JLabel space1 = new JLabel("");
+        JLabel space2 = new JLabel("");
+        JButton add = new JButton("Add new slang");
+        add.setFont(new Font("Times New Roman", Font.BOLD, 20));
+        JButton remove = new JButton("Remove old slang");
+        remove.setFont(new Font("Times New Roman", Font.BOLD, 20));
+        JButton edit = new JButton("Edit definitons");
+        edit.setFont(new Font("Times New Roman", Font.BOLD, 20));
+
+        interactPanel.add(title);
+        interactPanel.add(space1);
+        interactPanel.add(space2);
+        interactPanel.add(add);
+        interactPanel.add(remove);
+        interactPanel.add(edit);
+
+        GridLayout layout = new GridLayout(2, 3);
+        layout.setHgap(10);
+        interactPanel.setLayout(layout);
+
+        add.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(mainPanel, "addPage");
+            }
+        });
+
+        remove.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(mainPanel, "removePage");
+            }
+        });
+
+        edit.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(mainPanel, "editPage");
+            }
+        });
+
+        return interactPanel;
+    }
+
+    private static JPanel createResetPanel() {
+        JPanel resetPanel = new JPanel();
+        resetPanel.setBackground(bgColor);
+
+        JLabel title = new JLabel("Reset slang dictionary");
+        title.setFont(new Font("Times New Roman", Font.ITALIC, 25));
+        title.setForeground(Color.BLUE);
+        JLabel space1 = new JLabel("");
+        JLabel space2 = new JLabel("");
+        JLabel space3 = new JLabel("");
+        JButton reset = new JButton("Reset");
+        reset.setFont(new Font("Times New Roman", Font.BOLD, 20));
+
+        resetPanel.add(title);
+        resetPanel.add(space1);
+        resetPanel.add(space2);
+        resetPanel.add(space3);
+        resetPanel.add(reset);
+
+        GridLayout layout = new GridLayout(2, 3);
+        resetPanel.setLayout(layout);
+
+        reset.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(mainPanel, "resetPage");
+            }
+        });
+
+        return resetPanel;
+    }
+
+    private static JPanel createRandomPanel() {
+        JPanel randomPanel = new JPanel();
+        randomPanel.setBackground(bgColor);
+
+        JLabel title = new JLabel("Random activities");
+        title.setFont(new Font("Times New Roman", Font.ITALIC, 25));
+        title.setForeground(Color.BLUE);
+        JLabel space1 = new JLabel("");
+        JLabel space2 = new JLabel("");
+        JButton randomSlang = new JButton("Slang for today");
+        randomSlang.setFont(new Font("Times New Roman", Font.BOLD, 20));
+        JButton quizOnSlang = new JButton("Quiz on slang");
+        quizOnSlang.setFont(new Font("Times New Roman", Font.BOLD, 20));
+        JButton quizOnDef = new JButton("Quiz on definitions");
+        quizOnDef.setFont(new Font("Times New Roman", Font.BOLD, 20));
+
+        randomPanel.add(title);
+        randomPanel.add(space1);
+        randomPanel.add(space2);
+        randomPanel.add(randomSlang);
+        randomPanel.add(quizOnSlang);
+        randomPanel.add(quizOnDef);
+
+        GridLayout layout = new GridLayout(2, 3);
+        layout.setHgap(10);
+        randomPanel.setLayout(layout);
+
+        randomSlang.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(mainPanel, "randomSlangPage");
+            }
+        });
+
+        quizOnSlang.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(mainPanel, "quizOnSlangPage");
+            }
+        });
+
+        quizOnDef.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(mainPanel, "quizOnDefPage");
+            }
+        });
+        return randomPanel;
+    }
+
+    private static JPanel createFunctionPage(String functionTitle) {
+        JPanel functionPanel = new JPanel();
+        functionPanel.setBackground(bgColor);
+        JButton backButton = new JButton("Back to menu");
+        backButton.setFont(new Font("Times New Roman", Font.BOLD, 20));
+
+        backButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(mainPanel, "menu");
+            }
+        });
+
+        functionPanel.setLayout(new BorderLayout());
+        JLabel titleLabel = new JLabel(functionTitle, JLabel.CENTER);
+        titleLabel.setForeground(Color.BLUE);
+        titleLabel.setFont(new Font("Times New Roman", Font.BOLD, 35));
+        functionPanel.add(titleLabel, BorderLayout.NORTH);
+        functionPanel.add(backButton, BorderLayout.SOUTH);
+
+        return functionPanel;
     }
 }

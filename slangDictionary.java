@@ -14,9 +14,9 @@ class ArrrayList<T> {
 }
 
 public class slangDictionary {
-    public static TreeMap<String, ArrayList<String>> sourceDictionary;
-    public static TreeMap<String, ArrayList<String>> dictionary;
-    public static TreeMap<String, ArrayList<String>> historyDictionary;
+    private static TreeMap<String, ArrayList<String>> sourceDictionary;
+    private static TreeMap<String, ArrayList<String>> dictionary;
+    private static TreeMap<String, ArrayList<String>> historyDictionary;
 
     slangDictionary() {
         sourceDictionary = new TreeMap<>();
@@ -41,10 +41,9 @@ public class slangDictionary {
 
     public static void main(String[] args) {
         new menu();
-        new slangDictionary();
     }
 
-    private static TreeMap<String, ArrayList<String>> readDataFromFile() {
+    public static TreeMap<String, ArrayList<String>> readDataFromFile() {
         TreeMap<String, ArrayList<String>> dictionary = new TreeMap<>();
         File f = new File("slang.txt");
 
@@ -81,7 +80,7 @@ public class slangDictionary {
         return dictionary;
     }
 
-    private static void showTreeMap(TreeMap<String, ArrayList<String>> dictionary) {
+    public static void showTreeMap(TreeMap<String, ArrayList<String>> dictionary) {
         for (String slangWord : dictionary.keySet()) {
             System.out.println("Slang: " + slangWord);
             if (dictionary.get(slangWord).size() > 1) {
@@ -97,7 +96,7 @@ public class slangDictionary {
         System.out.println("");
     }
 
-    private static void showElement(String slangWord, ArrayList<String> def) {
+    public static void showElement(String slangWord, ArrayList<String> def) {
         System.out.println("Slang: " + slangWord);
         if (def.size() > 1) {
             for (int i = 0; i < def.size(); i++) {
@@ -115,17 +114,23 @@ public class slangDictionary {
      * @param dictionary
      * @param historyDictionary
      */
-    private static boolean searchBySlang(TreeMap<String, ArrayList<String>> dictionary,
-            TreeMap<String, ArrayList<String>> historyDictionary) {
+    public static boolean searchBySlang(TreeMap<String, ArrayList<String>> dictionary,
+            TreeMap<String, ArrayList<String>> historyDictionary, ArrayList<String> slangList) {
         System.out.print("Input slang you want to search: ");
         Scanner scan = new Scanner(System.in);
         String slang = scan.nextLine();
+        slangList = new ArrayList<>();
         int count = 0;
 
+        if (slang.equals("")) {
+            return false;
+        }
+
         for (String slangWord : dictionary.keySet()) {
-            if (slang.equals(slangWord.split("__")[0])) {
+            if (slangWord.split("__")[0].contains(slang)) {
                 showElement(slangWord, dictionary.get(slangWord));
                 historyDictionary.put(slangWord, dictionary.get(slangWord));
+                slangList.add(slangWord);
                 count++;
             }
         }
@@ -139,14 +144,19 @@ public class slangDictionary {
         }
     }
 
-    private static boolean searchBySlang(TreeMap<String, ArrayList<String>> dictionary,
-            TreeMap<String, ArrayList<String>> historyDictionary, String slang) {
+    public static boolean searchBySlang(TreeMap<String, ArrayList<String>> dictionary,
+            TreeMap<String, ArrayList<String>> historyDictionary, String slang, ArrayList<String> slangList) {
         int count = 0;
 
+        if (slang.equals("")) {
+            return false;
+        }
+
         for (String slangWord : dictionary.keySet()) {
-            if (slang.equals(slangWord.split("__")[0])) {
+            if (slangWord.split("__")[0].contains(slang)) {
                 showElement(slangWord, dictionary.get(slangWord));
                 historyDictionary.put(slangWord, dictionary.get(slangWord));
+                slangList.add(slangWord);
                 count++;
             }
         }
@@ -160,7 +170,7 @@ public class slangDictionary {
         }
     }
 
-    private static boolean searchByDefinition(TreeMap<String, ArrayList<String>> dictionary,
+    public static boolean searchByDefinition(TreeMap<String, ArrayList<String>> dictionary,
             TreeMap<String, ArrayList<String>> historyDictionary) {
         System.out.print("Input definition you want to search: ");
         Scanner scan = new Scanner(System.in);
@@ -188,10 +198,41 @@ public class slangDictionary {
         }
     }
 
-    private static TreeMap<String, ArrayList<String>> editSlangWord(TreeMap<String, ArrayList<String>> dictionary) {
+    public static boolean searchByDefinition(TreeMap<String, ArrayList<String>> dictionary,
+            TreeMap<String, ArrayList<String>> historyDictionary, String def, ArrayList<String> slangList) {
+        int count = 0;
+
+        if (def.equals("")) {
+            return false;
+        }
+
+        for (String slangWord : dictionary.keySet()) {
+            for (int i = 0; i < dictionary.get(slangWord).size(); i++) {
+                if (dictionary.get(slangWord).get(i).contains(def)) {
+                    showElement(slangWord, dictionary.get(slangWord));
+                    historyDictionary.put(slangWord, dictionary.get(slangWord));
+                    count++;
+                    slangList.add(slangWord);
+                    break;
+                }
+            }
+        }
+
+        if (count == 0) {
+            System.out.println("This definition does not exist in the dictionary");
+            System.out.println("");
+            return false;
+        } else {
+            System.out.println("");
+            return true;
+        }
+    }
+
+    public static TreeMap<String, ArrayList<String>> editSlangWord(TreeMap<String, ArrayList<String>> dictionary) {
         TreeMap<String, ArrayList<String>> duplicatedDictionary = new TreeMap<>();
         Scanner scan = new Scanner(System.in);
-        if (searchBySlang(dictionary, duplicatedDictionary)) {
+        ArrayList<String> slangList = new ArrayList<>();
+        if (searchBySlang(dictionary, duplicatedDictionary, slangList)) {
             for (String slangWord : duplicatedDictionary.keySet()) {
                 int choose = -1;
                 System.out.println("Do you want to edit " + slangWord + " ?");
@@ -235,11 +276,12 @@ public class slangDictionary {
         return dictionary;
     }
 
-    private static TreeMap<String, ArrayList<String>> editSlangWord(TreeMap<String, ArrayList<String>> dictionary,
+    public static TreeMap<String, ArrayList<String>> editSlangWord(TreeMap<String, ArrayList<String>> dictionary,
             String slang) {
         TreeMap<String, ArrayList<String>> duplicatedDictionary = new TreeMap<>();
         Scanner scan = new Scanner(System.in);
-        if (searchBySlang(dictionary, duplicatedDictionary, slang)) {
+        ArrayList<String> slangList = new ArrayList<>();
+        if (searchBySlang(dictionary, duplicatedDictionary, slang, slangList)) {
             for (String slangWord : duplicatedDictionary.keySet()) {
                 int choose = -1;
                 System.out.println("Do you want to edit " + slangWord + " ?");
@@ -283,11 +325,11 @@ public class slangDictionary {
         return dictionary;
     }
 
-    private static TreeMap<String, ArrayList<String>> removeSlangWord(TreeMap<String, ArrayList<String>> dictionary) {
+    public static TreeMap<String, ArrayList<String>> removeSlangWord(TreeMap<String, ArrayList<String>> dictionary) {
         TreeMap<String, ArrayList<String>> duplicatedDictionary = new TreeMap<>();
         Scanner scan = new Scanner(System.in);
-
-        if (searchBySlang(dictionary, duplicatedDictionary)) {
+        ArrayList<String> slangList = new ArrayList<>();
+        if (searchBySlang(dictionary, duplicatedDictionary, slangList)) {
             for (String slangWord : duplicatedDictionary.keySet()) {
                 System.out.println("Are you sure to remove slang " + slangWord + ": ");
                 System.out.println("1. Yes");
@@ -319,12 +361,12 @@ public class slangDictionary {
         return dictionary;
     }
 
-    private static TreeMap<String, ArrayList<String>> removeSlangWord(TreeMap<String, ArrayList<String>> dictionary,
+    public static TreeMap<String, ArrayList<String>> removeSlangWord(TreeMap<String, ArrayList<String>> dictionary,
             String slang) {
         TreeMap<String, ArrayList<String>> duplicatedDictionary = new TreeMap<>();
         Scanner scan = new Scanner(System.in);
-
-        if (searchBySlang(dictionary, duplicatedDictionary, slang)) {
+        ArrayList<String> slangList = new ArrayList<>();
+        if (searchBySlang(dictionary, duplicatedDictionary, slang, slangList)) {
             for (String slangWord : duplicatedDictionary.keySet()) {
                 dictionary.remove(slangWord);
 
@@ -338,17 +380,18 @@ public class slangDictionary {
         return dictionary;
     }
 
-    private static TreeMap<String, ArrayList<String>> addSlangWord(TreeMap<String, ArrayList<String>> dictionary) {
+    public static TreeMap<String, ArrayList<String>> addSlangWord(TreeMap<String, ArrayList<String>> dictionary) {
         Scanner scan = new Scanner(System.in);
         String slang = "";
         TreeMap<String, ArrayList<String>> duplicatedDictionary = new TreeMap<>();
+        ArrayList<String> slangList = new ArrayList<>();
 
         do {
             System.out.print("Input new slang you want to add: ");
             slang = scan.nextLine();
         } while (slang.isEmpty() || slang.contains("__"));
 
-        if (!searchBySlang(dictionary, duplicatedDictionary, slang)) {
+        if (!searchBySlang(dictionary, duplicatedDictionary, slang, slangList)) {
             ArrayList<String> definition = new ArrayList<>();
             int numberOfDef = 0;
             do {
@@ -455,11 +498,124 @@ public class slangDictionary {
         }
     }
 
-    private static TreeMap<String, ArrayList<String>> resetDictionary() {
+    public static TreeMap<String, ArrayList<String>> addSlangWord(TreeMap<String, ArrayList<String>> dictionary,
+            String slang) {
+        Scanner scan = new Scanner(System.in);
+        TreeMap<String, ArrayList<String>> duplicatedDictionary = new TreeMap<>();
+        ArrayList<String> slangList = new ArrayList<>();
+
+        if (!searchBySlang(dictionary, duplicatedDictionary, slang, slangList)) {
+            ArrayList<String> definition = new ArrayList<>();
+            int numberOfDef = 0;
+            do {
+                System.out.print("Input number of definitions for new slang: ");
+                numberOfDef = scan.nextInt();
+                scan.nextLine();
+            } while (numberOfDef <= 0);
+
+            if (numberOfDef == 1) {
+                System.out.print("Input definition for new slang: ");
+                String def = scan.nextLine();
+                definition.add(def);
+            } else {
+                for (int i = 0; i < numberOfDef; i++) {
+                    System.out.print("Input definition " + (i + 1) + " for new slang: ");
+                    String def = scan.nextLine();
+                    definition.add(def);
+                }
+            }
+            dictionary.put(slang, definition);
+
+            return dictionary;
+        } else {
+            System.out.println("This slang already exists in the dictionary");
+            System.out.println("The old slang:");
+            showTreeMap(duplicatedDictionary);
+            int choose = -1;
+            System.out.println("What do you want ?");
+            System.out.println("1. Overwrite the old slang");
+            System.out.println("2. Duplicate and create a new slang");
+            System.out.println("3. Exit");
+            do {
+                System.out.print("Input your choice: ");
+                choose = scan.nextInt();
+            } while (choose != 1 && choose != 2 && choose != 3);
+
+            switch (choose) {
+                case 1: {
+                    dictionary = editSlangWord(dictionary, slang);
+                    break;
+                }
+                case 2: {
+                    if (duplicatedDictionary.size() == 1) {
+                        String tempSlang = duplicatedDictionary.firstKey().split("__")[0] + "__ver1";
+                        ArrayList<String> tempDef = duplicatedDictionary.get(duplicatedDictionary.firstKey());
+
+                        dictionary = removeSlangWord(dictionary, slang);
+                        dictionary.put(tempSlang, tempDef);
+
+                        tempSlang = slang + "__ver2";
+                        ArrayList<String> definition = new ArrayList<>();
+                        int numberOfDef = 0;
+                        do {
+                            System.out.print("Input number of definitions for new slang: ");
+                            numberOfDef = scan.nextInt();
+                            scan.nextLine();
+                        } while (numberOfDef <= 0);
+
+                        if (numberOfDef == 1) {
+                            System.out.print("Input definition for new slang: ");
+                            String def = scan.nextLine();
+                            definition.add(def);
+                        } else {
+                            for (int i = 0; i < numberOfDef; i++) {
+                                System.out.print("Input definition " + (i + 1) + " for new slang: ");
+                                String def = scan.nextLine();
+                                definition.add(def);
+                            }
+                        }
+                        dictionary.put(tempSlang, definition);
+                    } else {
+                        System.out.println("");
+                        String tempSlang = slang + "__ver" + (duplicatedDictionary.size() + 1);
+                        ArrayList<String> definition = new ArrayList<>();
+                        int numberOfDef = 0;
+                        do {
+                            System.out.print("Input number of definitions for new slang: ");
+                            numberOfDef = scan.nextInt();
+                            scan.nextLine();
+                        } while (numberOfDef <= 0);
+
+                        if (numberOfDef == 1) {
+                            System.out.print("Input definition for new slang: ");
+                            String def = scan.nextLine();
+                            definition.add(def);
+                        } else {
+                            for (int i = 0; i < numberOfDef; i++) {
+                                System.out.print("Input definition " + (i + 1) + " for new slang: ");
+                                String def = scan.nextLine();
+                                definition.add(def);
+                            }
+                        }
+                        dictionary.put(tempSlang, definition);
+                    }
+                    break;
+                }
+                case 3: {
+                    break;
+                }
+            }
+
+            System.out.println("");
+            return dictionary;
+        }
+    }
+
+    public static TreeMap<String, ArrayList<String>> resetDictionary() {
         return sourceDictionary;
     }
 
-    private static TreeMap<String, ArrayList<String>> randomSlang(TreeMap<String, ArrayList<String>> dictionary) {
+    public static TreeMap<String, ArrayList<String>> randomSlang(TreeMap<String, ArrayList<String>> dictionary) {
         int size = dictionary.size();
         Random rand = new Random();
         int randomNumber = rand.nextInt(size);
@@ -480,7 +636,7 @@ public class slangDictionary {
         return randomSlang;
     }
 
-    private static boolean quizBySlang(TreeMap<String, ArrayList<String>> dictionary) {
+    public static boolean quizBySlang(TreeMap<String, ArrayList<String>> dictionary) {
         Scanner scan = new Scanner(System.in);
         boolean check = false;
 
@@ -529,7 +685,7 @@ public class slangDictionary {
         return check;
     }
 
-    private static boolean quizByDef(TreeMap<String, ArrayList<String>> dictionary) {
+    public static boolean quizByDef(TreeMap<String, ArrayList<String>> dictionary) {
         Scanner scan = new Scanner(System.in);
         boolean check = false;
 
@@ -583,12 +739,17 @@ class menu extends JFrame {
     private static Color bgColor = new Color(227, 197, 237);
     private static JPanel mainPanel;
     private static CardLayout cardLayout;
+    private static slangDictionary slangDictionary = new slangDictionary();;
+    private static TreeMap<String, ArrayList<String>> dictionary = slangDictionary.getDictionary();
+    private static TreeMap<String, ArrayList<String>> historyDictionary = slangDictionary.getHistoryDictionary();
+    private static TreeMap<String, ArrayList<String>> sourceDictionary = slangDictionary.getSourceDictionary();
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new menu());
     }
 
     menu() {
+
         frame = new JFrame("Slang Dictionary Application");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 800);
@@ -605,15 +766,23 @@ class menu extends JFrame {
 
         JPanel slangSearchPage = createFunctionPage("Searching by slang");
         mainPanel.add(slangSearchPage, "slangSearchPage");
+        contentSlangSearchPage(slangSearchPage);
 
         JPanel defSearchPage = createFunctionPage("Searching by definitions");
         mainPanel.add(defSearchPage, "defSearchPage");
+        contentDefSearchPage(defSearchPage);
 
-        JPanel viewHistoryPage = createFunctionPage("Searching history");
+        JPanel viewHistoryPage = createFunctionPage("History dictionary");
         mainPanel.add(viewHistoryPage, "viewHistoryPage");
+        contentViewHistoryPage(viewHistoryPage);
+
+        JPanel viewCurrentPage = createFunctionPage("Current dictionary");
+        mainPanel.add(viewCurrentPage, "viewCurrentPage");
+        contentViewCurrentPage(viewCurrentPage);
 
         JPanel addPage = createFunctionPage("Adding new slang to dictionary");
         mainPanel.add(addPage, "addPage");
+        contentAddPage(addPage);
 
         JPanel removePage = createFunctionPage("Remove slang from dictionary");
         mainPanel.add(removePage, "removePage");
@@ -623,6 +792,7 @@ class menu extends JFrame {
 
         JPanel resetPage = createFunctionPage("Reset to original dictionary");
         mainPanel.add(resetPage, "resetPage");
+        contentResetPage(resetPage);
 
         JPanel randomSlangPage = createFunctionPage("On this day slang word");
         mainPanel.add(randomSlangPage, "randomSlangPage");
@@ -641,7 +811,7 @@ class menu extends JFrame {
 
         JLabel header = createHeader();
         JPanel searchPanel = createSearchPanel();
-        JPanel historyPanel = createHistoryPanel();
+        JPanel historyPanel = createViewPanel();
         JPanel interactPanel = createInteractPanel();
         JPanel resetPanel = createResetPanel();
         JPanel randomPanel = createRandomPanel();
@@ -726,35 +896,41 @@ class menu extends JFrame {
         return searchPanel;
     }
 
-    private static JPanel createHistoryPanel() {
-        JPanel historyPanel = new JPanel();
-        historyPanel.setBackground(bgColor);
+    private static JPanel createViewPanel() {
+        JPanel viewPanel = new JPanel();
+        viewPanel.setBackground(bgColor);
 
-        JLabel title = new JLabel("View history search");
+        JLabel title = new JLabel("View");
         title.setFont(new Font("Times New Roman", Font.ITALIC, 25));
         title.setForeground(Color.BLUE);
-        JLabel space1 = new JLabel("");
-        JLabel space2 = new JLabel("");
-        JLabel space3 = new JLabel("");
-        JButton history = new JButton("History searching");
-        history.setFont(new Font("Times New Roman", Font.BOLD, 20));
+        JLabel space = new JLabel("");
+        JButton historyButton = new JButton("History dictionary");
+        historyButton.setFont(new Font("Times New Roman", Font.BOLD, 20));
+        JButton currentButton = new JButton("Current dictionary");
+        currentButton.setFont(new Font("Times New Roman", Font.BOLD, 20));
 
-        historyPanel.add(title);
-        historyPanel.add(space1);
-        historyPanel.add(space2);
-        historyPanel.add(space3);
-        historyPanel.add(history);
+        viewPanel.add(title);
+        viewPanel.add(space);
+        viewPanel.add(historyButton);
+        viewPanel.add(currentButton);
 
-        GridLayout layout = new GridLayout(2, 3);
-        historyPanel.setLayout(layout);
+        GridLayout layout = new GridLayout(2, 2);
+        layout.setHgap(10);
+        viewPanel.setLayout(layout);
 
-        history.addActionListener(new ActionListener() {
+        historyButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 cardLayout.show(mainPanel, "viewHistoryPage");
             }
         });
 
-        return historyPanel;
+        currentButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(mainPanel, "viewCurrentPage");
+            }
+        });
+
+        return viewPanel;
     }
 
     private static JPanel createInteractPanel() {
@@ -787,6 +963,9 @@ class menu extends JFrame {
         add.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 cardLayout.show(mainPanel, "addPage");
+                JPanel addPage = createFunctionPage("Adding new slang to dictionary");
+                mainPanel.add(addPage, "addPage");
+                contentAddPage(addPage);
             }
         });
 
@@ -830,6 +1009,9 @@ class menu extends JFrame {
         reset.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 cardLayout.show(mainPanel, "resetPage");
+                JPanel resetPage = createFunctionPage("Reset to original dictionary");
+                mainPanel.add(resetPage, "resetPage");
+                contentResetPage(resetPage);
             }
         });
 
@@ -893,6 +1075,16 @@ class menu extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 cardLayout.show(mainPanel, "menu");
+                functionPanel.removeAll();
+                functionPanel.revalidate();
+                functionPanel.repaint();
+                functionPanel.setLayout(new BorderLayout());
+                JLabel titleLabel = new JLabel(functionTitle, JLabel.CENTER);
+                titleLabel.setForeground(Color.BLUE);
+                titleLabel.setFont(new Font("Times New Roman", Font.BOLD, 35));
+
+                functionPanel.add(titleLabel, BorderLayout.NORTH);
+                functionPanel.add(backButton, BorderLayout.SOUTH);
             }
         });
 
@@ -900,9 +1092,376 @@ class menu extends JFrame {
         JLabel titleLabel = new JLabel(functionTitle, JLabel.CENTER);
         titleLabel.setForeground(Color.BLUE);
         titleLabel.setFont(new Font("Times New Roman", Font.BOLD, 35));
+
         functionPanel.add(titleLabel, BorderLayout.NORTH);
         functionPanel.add(backButton, BorderLayout.SOUTH);
 
         return functionPanel;
+    }
+
+    private static void contentSlangSearchPage(JPanel page) {
+        JLabel title = new JLabel("Input slang to see its definitions: ");
+        title.setFont(new Font("Times New Roman", Font.BOLD, 25));
+        JTextField inputField = new JTextField(50);
+        inputField.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+
+        JTextArea textArea = new JTextArea(30, 67);
+        JScrollPane answerField = new JScrollPane(textArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
+        JPanel textField = new JPanel();
+        textField.add(answerField, BorderLayout.CENTER);
+
+        JPanel input = new JPanel(new FlowLayout());
+        input.setBackground(bgColor);
+
+        input.add(title);
+        input.add(inputField);
+        input.add(textField);
+
+        inputField.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                textArea.setText(null);
+
+                String text = inputField.getText();
+                ArrayList<String> slangList = new ArrayList<>();
+                if (slangDictionary.searchBySlang(dictionary, historyDictionary, text, slangList)) {
+                    for (int i = 0; i < slangList.size(); i++) {
+                        String slangWord = slangList.get(i);
+                        ArrayList<String> def = dictionary.get(slangWord);
+                        textArea.append("Slang: " + slangWord + "\n");
+                        if (def.size() > 1) {
+                            for (int j = 0; j < def.size(); j++) {
+                                textArea.append("- Definiton " + (j + 1) + ": "
+                                        + def.get(j).toString().replace("[", "").replace("]", "") + "\n");
+                            }
+                        } else {
+                            textArea.append("- Definiton: " + def.toString().replace("[", "").replace("]", ""));
+                            textArea.append("\n");
+                        }
+                        textArea.append("\n");
+                    }
+                } else {
+                    textArea.setText("This slang doesn't exists in the dictionary");
+                }
+            }
+        });
+
+        page.add(input, BorderLayout.CENTER);
+    }
+
+    private static void contentDefSearchPage(JPanel page) {
+        JLabel title = new JLabel("Input definitions to see their slang: ");
+        title.setFont(new Font("Times New Roman", Font.BOLD, 25));
+        JTextField inputField = new JTextField(50);
+        inputField.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+
+        JTextArea textArea = new JTextArea(30, 67);
+        JScrollPane answerField = new JScrollPane(textArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
+        JPanel textField = new JPanel();
+        textField.add(answerField, BorderLayout.CENTER);
+
+        JPanel input = new JPanel(new FlowLayout());
+        input.setBackground(bgColor);
+
+        input.add(title);
+        input.add(inputField);
+        input.add(textField);
+
+        inputField.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                textArea.setText(null);
+
+                ArrayList<String> slangList = new ArrayList<>();
+                String text = inputField.getText();
+                if (slangDictionary.searchByDefinition(dictionary, historyDictionary, text, slangList)) {
+                    for (int i = 0; i < slangList.size(); i++) {
+                        String slangWord = slangList.get(i);
+                        ArrayList<String> def = dictionary.get(slangWord);
+                        textArea.append("Slang: " + slangWord + "\n");
+                        if (def.size() > 1) {
+                            for (int j = 0; j < def.size(); j++) {
+                                textArea.append("- Definiton " + (j + 1) + ": "
+                                        + def.get(j).toString().replace("[", "").replace("]", "") + "\n");
+                            }
+                        } else {
+                            textArea.append("- Definiton: " + def.toString().replace("[", "").replace("]", ""));
+                            textArea.append("\n");
+                        }
+                        textArea.append("\n");
+                    }
+                } else {
+                    textArea.setText("This definition doesn't exists in the dictionary");
+                }
+            }
+        });
+
+        page.add(input, BorderLayout.CENTER);
+    }
+
+    private static void contentViewHistoryPage(JPanel page) {
+        JLabel title = new JLabel("History dictionary");
+        title.setFont(new Font("Times New Roman", Font.BOLD, 25));
+        JButton button = new JButton("View history dictionary");
+        button.setFont(new Font("Times New Roman", Font.BOLD, 25));
+
+        JTextArea textArea = new JTextArea(30, 67);
+        JScrollPane answerField = new JScrollPane(textArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
+        JPanel textField = new JPanel();
+        textField.add(answerField, BorderLayout.CENTER);
+
+        JPanel input = new JPanel(new FlowLayout());
+        input.setBackground(bgColor);
+
+        input.add(title);
+        input.add(button);
+        input.add(textField);
+
+        button.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                textArea.setText(null);
+                if (historyDictionary.size() > 0) {
+                    for (String slangWord : historyDictionary.keySet()) {
+                        textArea.append("Slang: " + slangWord + "\n");
+                        ArrayList<String> def = historyDictionary.get(slangWord);
+                        if (def.size() > 1) {
+                            for (int j = 0; j < def.size(); j++) {
+                                textArea.append("- Definiton " + (j + 1) + ": "
+                                        + def.get(j).toString().replace("[", "").replace("]", "") + "\n");
+                            }
+                        } else {
+                            textArea.append("- Definiton: " + def.toString().replace("[", "").replace("]", ""));
+                            textArea.append("\n");
+                        }
+                        textArea.append("\n");
+                    }
+                } else {
+                    textArea.append("You did not search anything");
+                }
+            }
+        });
+
+        page.add(input, BorderLayout.CENTER);
+    }
+
+    private static void contentViewCurrentPage(JPanel page) {
+        JLabel title = new JLabel("Current dictionary");
+        title.setFont(new Font("Times New Roman", Font.BOLD, 25));
+        JButton button = new JButton("View current dictionary");
+        button.setFont(new Font("Times New Roman", Font.BOLD, 25));
+
+        JTextArea textArea = new JTextArea(30, 67);
+        JScrollPane answerField = new JScrollPane(textArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
+        JPanel textField = new JPanel();
+        textField.add(answerField, BorderLayout.CENTER);
+
+        JPanel input = new JPanel(new FlowLayout());
+        input.setBackground(bgColor);
+
+        input.add(title);
+        input.add(button);
+        input.add(textField);
+
+        button.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                textArea.setText(null);
+                if (dictionary.size() > 0) {
+                    for (String slangWord : dictionary.keySet()) {
+                        textArea.append("Slang: " + slangWord + "\n");
+                        ArrayList<String> def = dictionary.get(slangWord);
+                        if (def.size() > 1) {
+                            for (int j = 0; j < def.size(); j++) {
+                                textArea.append("- Definiton " + (j + 1) + ": "
+                                        + def.get(j).toString().replace("[", "").replace("]", "") + "\n");
+                            }
+                        } else {
+                            textArea.append("- Definiton: " + def.toString().replace("[", "").replace("]", ""));
+                            textArea.append("\n");
+                        }
+                        textArea.append("\n");
+                    }
+                } else {
+                    textArea.append("You did not search anything");
+                }
+            }
+        });
+
+        page.add(input, BorderLayout.CENTER);
+    }
+
+    private static void contentResetPage(JPanel page) {
+        JLabel title = new JLabel("Reset to original dictionary");
+        title.setFont(new Font("Times New Roman", Font.BOLD, 25));
+        JButton button = new JButton("Reset dictionary");
+        button.setFont(new Font("Times New Roman", Font.BOLD, 25));
+
+        JTextArea textArea = new JTextArea(30, 67);
+        JScrollPane answerField = new JScrollPane(textArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
+        JPanel textField = new JPanel();
+        textField.add(answerField, BorderLayout.CENTER);
+
+        JPanel input = new JPanel(new FlowLayout());
+        input.setBackground(bgColor);
+
+        input.add(title);
+        input.add(button);
+        input.add(textField);
+
+        button.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                textArea.setText(null);
+                dictionary = slangDictionary.resetDictionary();
+                for (String slangWord : dictionary.keySet()) {
+                    textArea.append("Slang: " + slangWord + "\n");
+                    ArrayList<String> def = dictionary.get(slangWord);
+                    if (def.size() > 1) {
+                        for (int j = 0; j < def.size(); j++) {
+                            textArea.append("- Definiton " + (j + 1) + ": "
+                                    + def.get(j).toString().replace("[", "").replace("]", "") + "\n");
+                        }
+                    } else {
+                        textArea.append("- Definiton: " + def.toString().replace("[", "").replace("]", ""));
+                        textArea.append("\n");
+                    }
+                    textArea.append("\n");
+                }
+            }
+        });
+
+        page.add(input, BorderLayout.CENTER);
+    }
+
+    private static void contentAddPage(JPanel page) {
+        JLabel inputTitle1 = new JLabel("Input new slang to add into dictionary: ");
+        inputTitle1.setFont(new Font("Times New Roman", Font.BOLD, 25));
+
+        JTextField inputField1 = new JTextField(50);
+        inputField1.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+
+        JTextArea textArea = new JTextArea(30, 67);
+        JScrollPane answerField = new JScrollPane(textArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
+        JPanel textField = new JPanel();
+        textField.add(answerField, BorderLayout.CENTER);
+
+        JPanel input = new JPanel(new FlowLayout());
+        input.setBackground(bgColor);
+
+        input.add(inputTitle1);
+        input.add(inputField1);
+        input.add(textField);
+
+        textArea.setText(null);
+        textArea.append("Inputing new slang word ...\n");
+        inputField1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                textArea.setText(null);
+
+                String text = inputField1.getText();
+                ArrayList<String> slangList = new ArrayList<>();
+
+                if (!text.isEmpty() && !text.contains("__")) {
+                    if (!slangDictionary.searchBySlang(dictionary, historyDictionary, text, slangList)) {
+                        textArea.append("This is a new slang word!!!\n");
+                        
+                        JLabel inputTitle2 = new JLabel("Input number of definitions for this slang: ");
+                        inputTitle2.setFont(new Font("Times New Roman", Font.BOLD, 25));
+
+                        JTextField inputField2 = new JTextField(50);
+                        inputField2.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+
+                        input.removeAll();
+                        input.revalidate();
+                        input.repaint();
+
+                        input.add(inputTitle2);
+                        input.add(inputField2);
+                        input.add(textField);
+
+                        inputField2.addActionListener(new ActionListener() {
+                            public void actionPerformed(ActionEvent e) {
+                                textArea.append("Inputing number of definitions...\n");
+
+                                int numOfDef = Integer.valueOf(inputField2.getText());
+                                ArrayList<String> definition = new ArrayList<>();
+
+                                if (numOfDef > 0) {
+                                    if (numOfDef == 1) {
+                                        JLabel inputTitle3 = new JLabel("Input definition for this slang: ");
+                                        inputTitle3.setFont(new Font("Times New Roman", Font.BOLD, 25));
+
+                                        JTextField inputField3 = new JTextField(50);
+                                        inputField3.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+
+                                        input.removeAll();
+                                        input.revalidate();
+                                        input.repaint();
+
+                                        input.add(inputTitle3);
+                                        input.add(inputField3);
+                                        input.add(textField);
+
+                                        textArea.append("Input slang definitions...\n");
+                                        inputField3.addActionListener(new ActionListener() {
+                                            public void actionPerformed(ActionEvent e) {
+                                                definition.add(inputField3.getText());
+                                                textArea.setText("Adding new slang successfully!!!");
+                                            }
+                                        });
+                                        dictionary.put(text, definition);
+                                    } else {
+                                        for (int i = 0; i < numOfDef; i++) {
+                                            JLabel inputTitle3 = new JLabel(
+                                                    "Input definition " + (i + 1) + " for this slang: ");
+                                            inputTitle3.setFont(new Font("Times New Roman", Font.BOLD, 25));
+
+                                            JTextField inputField3 = new JTextField(50);
+                                            inputField3.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+
+                                            input.removeAll();
+                                            input.revalidate();
+                                            input.repaint();
+
+                                            input.add(inputTitle3);
+                                            input.add(inputField3);
+                                            input.add(textField);
+
+                                            inputField3.addActionListener(new ActionListener() {
+                                                public void actionPerformed(ActionEvent e) {
+                                                    definition.add(inputField3.getText());
+                                                    textArea.setText("Adding new slang successfully!!!");
+                                                }
+                                            });
+                                            dictionary.put(text, definition);
+                                        }
+                                    }
+                                } else {
+                                    textArea.append("Number of definitions is invalid\n");
+                                }
+                            }
+                        });
+                    }
+                    else {
+                        textArea.append("This slang is already existed\n");
+                    }
+                } else {
+                    textArea.setText("New slang is invalid typing");
+                }
+            }
+        });
+
+        page.add(input, BorderLayout.CENTER);
     }
 }

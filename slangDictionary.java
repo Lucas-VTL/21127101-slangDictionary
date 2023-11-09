@@ -831,6 +831,7 @@ class menu extends JFrame {
 
         JPanel quizOnDefPage = createFunctionPage("Quiz on definitions");
         mainPanel.add(quizOnDefPage, "quizOnDefPage");
+        contentQuizOnDefPage(quizOnDefPage);
 
         frame.setVisible(true);
     }
@@ -1115,6 +1116,7 @@ class menu extends JFrame {
                 cardLayout.show(mainPanel, "quizOnDefPage");
                 JPanel quizOnDefPage = createFunctionPage("Quiz on definitions");
                 mainPanel.add(quizOnDefPage, "quizOnDefPage");
+                contentQuizOnDefPage(quizOnDefPage);
             }
         });
         return randomPanel;
@@ -1761,6 +1763,7 @@ class menu extends JFrame {
         JPanel label = new JPanel(new FlowLayout());
         label.add(inputTitle1);
         label.add(button);
+        label.setBackground(bgColor);
 
         input.add(label);
 
@@ -1792,20 +1795,442 @@ class menu extends JFrame {
                 JLabel question = new JLabel("What is the definitions of " + answerSlang.firstKey() + " ?");
                 question.setFont(new Font("Times New Roman", Font.BOLD, 30));
                 question.setForeground(Color.RED);
-                JPanel answerSpace = new JPanel(new GridLayout(2, 2));
+                JPanel answerSpace = new JPanel(new GridLayout(2, 2, 10, 5));
+
+                JPanel quiz = new JPanel(new FlowLayout());
+                quiz.add(question);
+                quiz.add(answerSpace);
+                quiz.setBackground(bgColor);
+
+                input.add(quiz);
+
+                String[] def = new String[4];
+                int j = 0;
 
                 for (String slang : mixSlang.keySet()) {
-                    String def = "";
+                    def[j] = "";
                     for (int i = 0; i < mixSlang.get(slang).size(); i++) {
-                        def += mixSlang.get(slang).get(i);
+                        def[j] += mixSlang.get(slang).get(i);
                     }
-                    JButton chooseButton = new JButton(def);
-                    chooseButton.setFont(new Font("Times New Roman", Font.PLAIN, 20));
-                    answerSpace.add(chooseButton);
+                    j++;
                 }
 
-                JPanel quiz = new JPanel();
+                JButton button1 = new JButton(def[0]);
+                button1.setFont(new Font("Times New Roman", Font.PLAIN, 17));
+                JButton button2 = new JButton(def[1]);
+                button2.setFont(new Font("Times New Roman", Font.PLAIN, 17));
+                JButton button3 = new JButton(def[2]);
+                button3.setFont(new Font("Times New Roman", Font.PLAIN, 17));
+                JButton button4 = new JButton(def[3]);
+                button4.setFont(new Font("Times New Roman", Font.PLAIN, 17));
 
+                answerSpace.add(button1);
+                answerSpace.add(button2);
+                answerSpace.add(button3);
+                answerSpace.add(button4);
+
+                TreeMap<String, ArrayList<String>> copySlang = new TreeMap<>();
+                copySlang.putAll(answerSlang);
+
+                button1.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        input.removeAll();
+                        input.revalidate();
+                        input.repaint();
+
+                        input.add(label);
+                        input.add(quiz);
+
+                        String tempDef = "";
+                        for (int i = 0; i < copySlang.get(copySlang.firstKey()).size(); i++) {
+                            tempDef += copySlang.get(copySlang.firstKey()).get(i);
+                        }
+                        if (def[0].equals(tempDef)) {
+                            JLabel confirm = new JLabel("Your answer is correct", JLabel.CENTER);
+                            JLabel congrat = new JLabel("Congratulation!!!", JLabel.CENTER);
+                            confirm.setFont(new Font("Times New Roman", Font.BOLD, 25));
+                            congrat.setFont(new Font("Times New Roman", Font.BOLD, 25));
+
+                            JPanel result = new JPanel(new GridLayout(2, 1));
+                            result.add(confirm);
+                            result.add(congrat);
+                            result.setBackground(bgColor);
+
+                            input.add(result);
+                        } else {
+                            JLabel confirm = new JLabel("Your answer is incorrect", JLabel.CENTER);
+                            JLabel answer = new JLabel("The accurated answer is: " + tempDef, JLabel.CENTER);
+                            confirm.setFont(new Font("Times New Roman", Font.BOLD, 25));
+                            answer.setFont(new Font("Times New Roman", Font.BOLD, 25));
+
+                            JPanel result = new JPanel(new GridLayout(2, 1));
+                            result.add(confirm);
+                            result.add(answer);
+                            result.setBackground(bgColor);
+
+                            input.add(result);
+                        }
+                    }
+                });
+
+                button2.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        input.removeAll();
+                        input.revalidate();
+                        input.repaint();
+
+                        input.add(label);
+                        input.add(quiz);
+
+                        String tempDef = "";
+                        for (int i = 0; i < copySlang.get(copySlang.firstKey()).size(); i++) {
+                            tempDef += copySlang.get(copySlang.firstKey()).get(i);
+                        }
+                        if (def[1].equals(tempDef)) {
+                            JLabel confirm = new JLabel("Your answer is correct", JLabel.CENTER);
+                            JLabel congrat = new JLabel("Congratulation!!!", JLabel.CENTER);
+                            confirm.setFont(new Font("Times New Roman", Font.BOLD, 25));
+                            congrat.setFont(new Font("Times New Roman", Font.BOLD, 25));
+
+                            JPanel result = new JPanel(new GridLayout(2, 1));
+                            result.add(confirm);
+                            result.add(congrat);
+                            result.setBackground(bgColor);
+
+                            input.add(result);
+                        } else {
+                            JLabel confirm = new JLabel("Your answer is incorrect", JLabel.CENTER);
+                            JLabel answer = new JLabel("The accurated answer is: " + tempDef, JLabel.CENTER);
+                            confirm.setFont(new Font("Times New Roman", Font.BOLD, 25));
+                            answer.setFont(new Font("Times New Roman", Font.BOLD, 25));
+
+                            JPanel result = new JPanel(new GridLayout(2, 1));
+                            result.add(confirm);
+                            result.add(answer);
+                            result.setBackground(bgColor);
+
+                            input.add(result);
+                        }
+                    }
+                });
+
+                button3.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        input.removeAll();
+                        input.revalidate();
+                        input.repaint();
+
+                        input.add(label);
+                        input.add(quiz);
+
+                        String tempDef = "";
+                        for (int i = 0; i < copySlang.get(copySlang.firstKey()).size(); i++) {
+                            tempDef += copySlang.get(copySlang.firstKey()).get(i);
+                        }
+                        if (def[2].equals(tempDef)) {
+                            JLabel confirm = new JLabel("Your answer is correct", JLabel.CENTER);
+                            JLabel congrat = new JLabel("Congratulation!!!", JLabel.CENTER);
+                            confirm.setFont(new Font("Times New Roman", Font.BOLD, 25));
+                            congrat.setFont(new Font("Times New Roman", Font.BOLD, 25));
+
+                            JPanel result = new JPanel(new GridLayout(2, 1));
+                            result.add(confirm);
+                            result.add(congrat);
+                            result.setBackground(bgColor);
+
+                            input.add(result);
+                        } else {
+                            JLabel confirm = new JLabel("Your answer is incorrect", JLabel.CENTER);
+                            JLabel answer = new JLabel("The accurated answer is: " + tempDef, JLabel.CENTER);
+                            confirm.setFont(new Font("Times New Roman", Font.BOLD, 25));
+                            answer.setFont(new Font("Times New Roman", Font.BOLD, 25));
+
+                            JPanel result = new JPanel(new GridLayout(2, 1));
+                            result.add(confirm);
+                            result.add(answer);
+                            result.setBackground(bgColor);
+
+                            input.add(result);
+                        }
+                    }
+                });
+
+                button4.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        input.removeAll();
+                        input.revalidate();
+                        input.repaint();
+
+                        input.add(label);
+                        input.add(quiz);
+
+                        String tempDef = "";
+                        for (int i = 0; i < copySlang.get(copySlang.firstKey()).size(); i++) {
+                            tempDef += copySlang.get(copySlang.firstKey()).get(i);
+                        }
+                        if (def[3].equals(tempDef)) {
+                            JLabel confirm = new JLabel("Your answer is correct", JLabel.CENTER);
+                            JLabel congrat = new JLabel("Congratulation!!!", JLabel.CENTER);
+                            confirm.setFont(new Font("Times New Roman", Font.BOLD, 25));
+                            congrat.setFont(new Font("Times New Roman", Font.BOLD, 25));
+
+                            JPanel result = new JPanel(new GridLayout(2, 1));
+                            result.add(confirm);
+                            result.add(congrat);
+                            result.setBackground(bgColor);
+
+                            input.add(result);
+                        } else {
+                            JLabel confirm = new JLabel("Your answer is incorrect", JLabel.CENTER);
+                            JLabel answer = new JLabel("The accurated answer is: " + tempDef, JLabel.CENTER);
+                            confirm.setFont(new Font("Times New Roman", Font.BOLD, 25));
+                            answer.setFont(new Font("Times New Roman", Font.BOLD, 25));
+
+                            JPanel result = new JPanel(new GridLayout(2, 1));
+                            result.add(confirm);
+                            result.add(answer);
+                            result.setBackground(bgColor);
+
+                            input.add(result);
+                        }
+                    }
+                });
+            }
+        });
+
+        page.add(input, BorderLayout.CENTER);
+    }
+
+    private static void contentQuizOnDefPage(JPanel page) {
+        JLabel inputTitle1 = new JLabel("Click to start quiz on definitions: ");
+        inputTitle1.setFont(new Font("Times New Roman", Font.BOLD, 25));
+
+        JButton button = new JButton("Start");
+        button.setFont(new Font("Times New Roman", Font.PLAIN, 20));
+
+        JPanel input = new JPanel(new GridLayout(3, 1));
+        input.setBackground(bgColor);
+
+        JPanel label = new JPanel(new FlowLayout());
+        label.add(inputTitle1);
+        label.add(button);
+        label.setBackground(bgColor);
+
+        input.add(label);
+
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                input.removeAll();
+                input.revalidate();
+                input.repaint();
+
+                input.add(label);
+
+                TreeMap<String, ArrayList<String>> answerSlang = new TreeMap<>();
+                TreeMap<String, ArrayList<String>> wrongSlang_1 = new TreeMap<>();
+                TreeMap<String, ArrayList<String>> wrongSlang_2 = new TreeMap<>();
+                TreeMap<String, ArrayList<String>> wrongSlang_3 = new TreeMap<>();
+
+                answerSlang = slangDictionary.randomSlang(dictionary);
+                wrongSlang_1 = slangDictionary.randomSlang(dictionary);
+                wrongSlang_2 = slangDictionary.randomSlang(dictionary);
+                wrongSlang_3 = slangDictionary.randomSlang(dictionary);
+
+                TreeMap<String, ArrayList<String>> mixSlang = new TreeMap<>();
+                mixSlang.put(answerSlang.firstKey(), answerSlang.get(answerSlang.firstKey()));
+                mixSlang.put(wrongSlang_1.firstKey(), wrongSlang_1.get(wrongSlang_1.firstKey()));
+                mixSlang.put(wrongSlang_2.firstKey(), wrongSlang_2.get(wrongSlang_2.firstKey()));
+                mixSlang.put(wrongSlang_3.firstKey(), wrongSlang_3.get(wrongSlang_3.firstKey()));
+
+                JLabel question = new JLabel("What is the slang which definitions are", JLabel.CENTER);
+                JLabel defSpace = new JLabel("" + answerSlang.get(answerSlang.firstKey()) + " ?", JLabel.CENTER);
+                question.setFont(new Font("Times New Roman", Font.BOLD, 30));
+                defSpace.setFont(new Font("Times New Roman", Font.BOLD, 30));
+                question.setForeground(Color.RED);
+                defSpace.setForeground(Color.RED);
+                JPanel answerSpace = new JPanel(new GridLayout(2, 2, 10, 5));
+
+                JPanel quiz = new JPanel(new GridLayout(3, 1, 10, 5));
+                quiz.add(question);
+                quiz.add(defSpace);
+                quiz.add(answerSpace);
+                quiz.setBackground(bgColor);
+
+                input.add(quiz);
+
+                String[] slangList = new String[4];
+                int j = 0;
+
+                for (String slang : mixSlang.keySet()) {
+                    slangList[j] = slang;
+                    j++;
+                }
+
+                JButton button1 = new JButton(slangList[0]);
+                button1.setFont(new Font("Times New Roman", Font.PLAIN, 17));
+                JButton button2 = new JButton(slangList[1]);
+                button2.setFont(new Font("Times New Roman", Font.PLAIN, 17));
+                JButton button3 = new JButton(slangList[2]);
+                button3.setFont(new Font("Times New Roman", Font.PLAIN, 17));
+                JButton button4 = new JButton(slangList[3]);
+                button4.setFont(new Font("Times New Roman", Font.PLAIN, 17));
+
+                answerSpace.add(button1);
+                answerSpace.add(button2);
+                answerSpace.add(button3);
+                answerSpace.add(button4);
+
+                TreeMap<String, ArrayList<String>> copySlang = new TreeMap<>();
+                copySlang.putAll(answerSlang);
+
+                button1.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        input.removeAll();
+                        input.revalidate();
+                        input.repaint();
+
+                        input.add(label);
+                        input.add(quiz);
+
+                        if (slangList[0].equals(copySlang.firstKey())) {
+                            JLabel confirm = new JLabel("Your answer is correct", JLabel.CENTER);
+                            JLabel congrat = new JLabel("Congratulation!!!", JLabel.CENTER);
+                            confirm.setFont(new Font("Times New Roman", Font.BOLD, 25));
+                            congrat.setFont(new Font("Times New Roman", Font.BOLD, 25));
+
+                            JPanel result = new JPanel(new GridLayout(2, 1));
+                            result.add(confirm);
+                            result.add(congrat);
+                            result.setBackground(bgColor);
+
+                            input.add(result);
+                        } else {
+                            JLabel confirm = new JLabel("Your answer is incorrect", JLabel.CENTER);
+                            JLabel answer = new JLabel("The accurated answer is: " + copySlang.firstKey(), JLabel.CENTER);
+                            confirm.setFont(new Font("Times New Roman", Font.BOLD, 25));
+                            answer.setFont(new Font("Times New Roman", Font.BOLD, 25));
+
+                            JPanel result = new JPanel(new GridLayout(2, 1));
+                            result.add(confirm);
+                            result.add(answer);
+                            result.setBackground(bgColor);
+
+                            input.add(result);
+                        }
+                    }
+                });
+
+                button2.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        input.removeAll();
+                        input.revalidate();
+                        input.repaint();
+
+                        input.add(label);
+                        input.add(quiz);
+
+                        if (slangList[1].equals(copySlang.firstKey())) {
+                            JLabel confirm = new JLabel("Your answer is correct", JLabel.CENTER);
+                            JLabel congrat = new JLabel("Congratulation!!!", JLabel.CENTER);
+                            confirm.setFont(new Font("Times New Roman", Font.BOLD, 25));
+                            congrat.setFont(new Font("Times New Roman", Font.BOLD, 25));
+
+                            JPanel result = new JPanel(new GridLayout(2, 1));
+                            result.add(confirm);
+                            result.add(congrat);
+                            result.setBackground(bgColor);
+
+                            input.add(result);
+                        } else {
+                            JLabel confirm = new JLabel("Your answer is incorrect", JLabel.CENTER);
+                            JLabel answer = new JLabel("The accurated answer is: " + copySlang.firstKey(), JLabel.CENTER);
+                            confirm.setFont(new Font("Times New Roman", Font.BOLD, 25));
+                            answer.setFont(new Font("Times New Roman", Font.BOLD, 25));
+
+                            JPanel result = new JPanel(new GridLayout(2, 1));
+                            result.add(confirm);
+                            result.add(answer);
+                            result.setBackground(bgColor);
+
+                            input.add(result);
+                        }
+                    }
+                });
+
+                button3.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        input.removeAll();
+                        input.revalidate();
+                        input.repaint();
+
+                        input.add(label);
+                        input.add(quiz);
+
+                        if (slangList[2].equals(copySlang.firstKey())) {
+                            JLabel confirm = new JLabel("Your answer is correct", JLabel.CENTER);
+                            JLabel congrat = new JLabel("Congratulation!!!", JLabel.CENTER);
+                            confirm.setFont(new Font("Times New Roman", Font.BOLD, 25));
+                            congrat.setFont(new Font("Times New Roman", Font.BOLD, 25));
+
+                            JPanel result = new JPanel(new GridLayout(2, 1));
+                            result.add(confirm);
+                            result.add(congrat);
+                            result.setBackground(bgColor);
+
+                            input.add(result);
+                        } else {
+                            JLabel confirm = new JLabel("Your answer is incorrect", JLabel.CENTER);
+                            JLabel answer = new JLabel("The accurated answer is: " + copySlang.firstKey(), JLabel.CENTER);
+                            confirm.setFont(new Font("Times New Roman", Font.BOLD, 25));
+                            answer.setFont(new Font("Times New Roman", Font.BOLD, 25));
+
+                            JPanel result = new JPanel(new GridLayout(2, 1));
+                            result.add(confirm);
+                            result.add(answer);
+                            result.setBackground(bgColor);
+
+                            input.add(result);
+                        }
+                    }
+                });
+
+                button4.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        input.removeAll();
+                        input.revalidate();
+                        input.repaint();
+
+                        input.add(label);
+                        input.add(quiz);
+
+                        if (slangList[3].equals(copySlang.firstKey())) {
+                            JLabel confirm = new JLabel("Your answer is correct", JLabel.CENTER);
+                            JLabel congrat = new JLabel("Congratulation!!!", JLabel.CENTER);
+                            confirm.setFont(new Font("Times New Roman", Font.BOLD, 25));
+                            congrat.setFont(new Font("Times New Roman", Font.BOLD, 25));
+
+                            JPanel result = new JPanel(new GridLayout(2, 1));
+                            result.add(confirm);
+                            result.add(congrat);
+                            result.setBackground(bgColor);
+
+                            input.add(result);
+                        } else {
+                            JLabel confirm = new JLabel("Your answer is incorrect", JLabel.CENTER);
+                            JLabel answer = new JLabel("The accurated answer is: " + copySlang.firstKey(), JLabel.CENTER);
+                            confirm.setFont(new Font("Times New Roman", Font.BOLD, 25));
+                            answer.setFont(new Font("Times New Roman", Font.BOLD, 25));
+
+                            JPanel result = new JPanel(new GridLayout(2, 1));
+                            result.add(confirm);
+                            result.add(answer);
+                            result.setBackground(bgColor);
+
+                            input.add(result);
+                        }
+                    }
+                });
             }
         });
 

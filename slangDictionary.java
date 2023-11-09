@@ -170,6 +170,31 @@ public class slangDictionary {
         }
     }
 
+    public static boolean searchBySlang(TreeMap<String, ArrayList<String>> dictionary,
+            TreeMap<String, ArrayList<String>> historyDictionary, String slang) {
+        int count = 0;
+
+        if (slang.equals("")) {
+            return false;
+        }
+
+        for (String slangWord : dictionary.keySet()) {
+            if (slangWord.split("__")[0].equals(slang)) {
+                showElement(slangWord, dictionary.get(slangWord));
+                historyDictionary.put(slangWord, dictionary.get(slangWord));
+                count++;
+            }
+        }
+        if (count == 0) {
+            System.out.println("This slang does not exist in the dictionary");
+            System.out.println("");
+            return false;
+        } else {
+            System.out.println("");
+            return true;
+        }
+    }
+
     public static boolean searchByDefinition(TreeMap<String, ArrayList<String>> dictionary,
             TreeMap<String, ArrayList<String>> historyDictionary) {
         System.out.print("Input definition you want to search: ");
@@ -786,9 +811,11 @@ class menu extends JFrame {
 
         JPanel removePage = createFunctionPage("Remove slang from dictionary");
         mainPanel.add(removePage, "removePage");
+        contentRemovePage(removePage);
 
         JPanel editPage = createFunctionPage("Edit slang definitions");
         mainPanel.add(editPage, "editPage");
+        contentEditPage(editPage);
 
         JPanel resetPage = createFunctionPage("Reset to original dictionary");
         mainPanel.add(resetPage, "resetPage");
@@ -796,9 +823,11 @@ class menu extends JFrame {
 
         JPanel randomSlangPage = createFunctionPage("On this day slang word");
         mainPanel.add(randomSlangPage, "randomSlangPage");
+        contentRandomeSlangPage(randomSlangPage);
 
         JPanel quizOnSlangPage = createFunctionPage("Quiz on slang");
         mainPanel.add(quizOnSlangPage, "quizOnSlangPage");
+        contentQuizOnSlangPage(quizOnSlangPage);
 
         JPanel quizOnDefPage = createFunctionPage("Quiz on definitions");
         mainPanel.add(quizOnDefPage, "quizOnDefPage");
@@ -884,12 +913,18 @@ class menu extends JFrame {
         slangSearch.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 cardLayout.show(mainPanel, "slangSearchPage");
+                JPanel slangSearchPage = createFunctionPage("Searching by slang");
+                mainPanel.add(slangSearchPage, "slangSearchPage");
+                contentSlangSearchPage(slangSearchPage);
             }
         });
 
         defSearch.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 cardLayout.show(mainPanel, "defSearchPage");
+                JPanel defSearchPage = createFunctionPage("Searching by definitions");
+                mainPanel.add(defSearchPage, "defSearchPage");
+                contentDefSearchPage(defSearchPage);
             }
         });
 
@@ -921,12 +956,18 @@ class menu extends JFrame {
         historyButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 cardLayout.show(mainPanel, "viewHistoryPage");
+                JPanel viewHistoryPage = createFunctionPage("History dictionary");
+                mainPanel.add(viewHistoryPage, "viewHistoryPage");
+                contentViewHistoryPage(viewHistoryPage);
             }
         });
 
         currentButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 cardLayout.show(mainPanel, "viewCurrentPage");
+                JPanel viewCurrentPage = createFunctionPage("Current dictionary");
+                mainPanel.add(viewCurrentPage, "viewCurrentPage");
+                contentViewCurrentPage(viewCurrentPage);
             }
         });
 
@@ -972,12 +1013,18 @@ class menu extends JFrame {
         remove.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 cardLayout.show(mainPanel, "removePage");
+                JPanel removePage = createFunctionPage("Remove slang from dictionary");
+                mainPanel.add(removePage, "removePage");
+                contentRemovePage(removePage);
             }
         });
 
         edit.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 cardLayout.show(mainPanel, "editPage");
+                JPanel editPage = createFunctionPage("Edit slang definitions");
+                mainPanel.add(editPage, "editPage");
+                contentEditPage(editPage);
             }
         });
 
@@ -1048,18 +1095,26 @@ class menu extends JFrame {
         randomSlang.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 cardLayout.show(mainPanel, "randomSlangPage");
+                JPanel randomSlangPage = createFunctionPage("On this day slang word");
+                mainPanel.add(randomSlangPage, "randomSlangPage");
+                contentRandomeSlangPage(randomSlangPage);
             }
         });
 
         quizOnSlang.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 cardLayout.show(mainPanel, "quizOnSlangPage");
+                JPanel quizOnSlangPage = createFunctionPage("Quiz on slang");
+                mainPanel.add(quizOnSlangPage, "quizOnSlangPage");
+                contentQuizOnSlangPage(quizOnSlangPage);
             }
         });
 
         quizOnDef.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 cardLayout.show(mainPanel, "quizOnDefPage");
+                JPanel quizOnDefPage = createFunctionPage("Quiz on definitions");
+                mainPanel.add(quizOnDefPage, "quizOnDefPage");
             }
         });
         return randomPanel;
@@ -1370,13 +1425,100 @@ class menu extends JFrame {
                 textArea.setText(null);
 
                 String text = inputField1.getText();
-                ArrayList<String> slangList = new ArrayList<>();
 
                 if (!text.isEmpty() && !text.contains("__")) {
-                    if (!slangDictionary.searchBySlang(dictionary, historyDictionary, text, slangList)) {
+                    TreeMap<String, ArrayList<String>> duplicatedDictionary = new TreeMap<>();
+                    if (slangDictionary.searchBySlang(dictionary, duplicatedDictionary, text)) {
+                        textArea.append("This slang is already existed in the dictionary\n");
+                        JLabel inputTitle2 = new JLabel("What do you want to do ?");
+                        inputTitle2.setFont(new Font("Times New Roman", Font.BOLD, 25));
+
+                        JButton overWrite = new JButton("Overwrite");
+                        overWrite.setFont(new Font("Times New Roman", Font.BOLD, 20));
+                        JButton duplicate = new JButton("Duplicate");
+                        duplicate.setFont(new Font("Times New Roman", Font.BOLD, 20));
+
+                        input.removeAll();
+                        input.revalidate();
+                        input.repaint();
+
+                        input.add(inputTitle2);
+                        input.add(overWrite);
+                        input.add(duplicate);
+                        input.add(textField);
+
+                        overWrite.addActionListener(new ActionListener() {
+                            public void actionPerformed(ActionEvent e) {
+                                textArea.append("Overwriting...\n");
+                                textArea.append("Input new definitions for the slanng...\n");
+                                JLabel inputTitle2 = new JLabel(
+                                        "Input definitions for this slang (Each definition is separated by ;): ");
+                                inputTitle2.setFont(new Font("Times New Roman", Font.BOLD, 25));
+                                JTextField inputField2 = new JTextField(50);
+                                inputField2.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+
+                                input.removeAll();
+                                input.revalidate();
+                                input.repaint();
+
+                                input.add(inputTitle2);
+                                input.add(inputField2);
+                                input.add(textField);
+
+                                inputField2.addActionListener(new ActionListener() {
+                                    public void actionPerformed(ActionEvent e) {
+                                        ArrayList<String> definition = new ArrayList<>();
+                                        String def = inputField2.getText();
+                                        String[] defList = def.split(";");
+                                        for (int i = 0; i < defList.length; i++) {
+                                            definition.add(defList[i]);
+                                        }
+
+                                        dictionary.put(text, definition);
+                                        textArea.setText("Overwriting slang successfully!!!");
+                                        inputField2.setText(null);
+                                    }
+                                });
+                            }
+                        });
+
+                        duplicate.addActionListener(new ActionListener() {
+                            public void actionPerformed(ActionEvent e) {
+                                textArea.append("Duplicating...\n");
+                                textArea.append("Input new definitions for the slanng...\n");
+                                JLabel inputTitle2 = new JLabel(
+                                        "Input new definitions (Each definition is separated by ;): ");
+                                inputTitle2.setFont(new Font("Times New Roman", Font.BOLD, 25));
+                                JTextField inputField2 = new JTextField(50);
+                                inputField2.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+
+                                input.removeAll();
+                                input.revalidate();
+                                input.repaint();
+
+                                input.add(inputTitle2);
+                                input.add(inputField2);
+                                input.add(textField);
+
+                                inputField2.addActionListener(new ActionListener() {
+                                    public void actionPerformed(ActionEvent e) {
+                                        String def = inputField2.getText();
+                                        String[] defList = def.split(";");
+                                        for (int i = 0; i < defList.length; i++) {
+                                            dictionary.get(text).add(defList[i]);
+                                        }
+
+                                        textArea.setText("Duplicating slang's definitions successfully!!!");
+                                        inputField2.setText(null);
+                                    }
+                                });
+                            }
+                        });
+                    } else {
                         textArea.append("This is a new slang word!!!\n");
-                        
-                        JLabel inputTitle2 = new JLabel("Input number of definitions for this slang: ");
+
+                        JLabel inputTitle2 = new JLabel(
+                                "Input definitions for this slang (Each definition is separated by ;): ");
                         inputTitle2.setFont(new Font("Times New Roman", Font.BOLD, 25));
 
                         JTextField inputField2 = new JTextField(50);
@@ -1390,75 +1532,280 @@ class menu extends JFrame {
                         input.add(inputField2);
                         input.add(textField);
 
+                        textArea.append("Inputing definitions for the slang...\n");
                         inputField2.addActionListener(new ActionListener() {
                             public void actionPerformed(ActionEvent e) {
-                                textArea.append("Inputing number of definitions...\n");
-
-                                int numOfDef = Integer.valueOf(inputField2.getText());
                                 ArrayList<String> definition = new ArrayList<>();
-
-                                if (numOfDef > 0) {
-                                    if (numOfDef == 1) {
-                                        JLabel inputTitle3 = new JLabel("Input definition for this slang: ");
-                                        inputTitle3.setFont(new Font("Times New Roman", Font.BOLD, 25));
-
-                                        JTextField inputField3 = new JTextField(50);
-                                        inputField3.setFont(new Font("Times New Roman", Font.PLAIN, 15));
-
-                                        input.removeAll();
-                                        input.revalidate();
-                                        input.repaint();
-
-                                        input.add(inputTitle3);
-                                        input.add(inputField3);
-                                        input.add(textField);
-
-                                        textArea.append("Input slang definitions...\n");
-                                        inputField3.addActionListener(new ActionListener() {
-                                            public void actionPerformed(ActionEvent e) {
-                                                definition.add(inputField3.getText());
-                                                textArea.setText("Adding new slang successfully!!!");
-                                            }
-                                        });
-                                        dictionary.put(text, definition);
-                                    } else {
-                                        for (int i = 0; i < numOfDef; i++) {
-                                            JLabel inputTitle3 = new JLabel(
-                                                    "Input definition " + (i + 1) + " for this slang: ");
-                                            inputTitle3.setFont(new Font("Times New Roman", Font.BOLD, 25));
-
-                                            JTextField inputField3 = new JTextField(50);
-                                            inputField3.setFont(new Font("Times New Roman", Font.PLAIN, 15));
-
-                                            input.removeAll();
-                                            input.revalidate();
-                                            input.repaint();
-
-                                            input.add(inputTitle3);
-                                            input.add(inputField3);
-                                            input.add(textField);
-
-                                            inputField3.addActionListener(new ActionListener() {
-                                                public void actionPerformed(ActionEvent e) {
-                                                    definition.add(inputField3.getText());
-                                                    textArea.setText("Adding new slang successfully!!!");
-                                                }
-                                            });
-                                            dictionary.put(text, definition);
-                                        }
-                                    }
-                                } else {
-                                    textArea.append("Number of definitions is invalid\n");
+                                String def = inputField2.getText();
+                                String[] defList = def.split(";");
+                                for (int i = 0; i < defList.length; i++) {
+                                    definition.add(defList[i]);
                                 }
+
+                                dictionary.put(text, definition);
+                                textArea.setText("Adding new slang successfully!!!");
+                                inputField2.setText(null);
                             }
                         });
-                    }
-                    else {
-                        textArea.append("This slang is already existed\n");
                     }
                 } else {
                     textArea.setText("New slang is invalid typing");
                 }
+            }
+        });
+        page.add(input, BorderLayout.CENTER);
+    }
+
+    private static void contentRemovePage(JPanel page) {
+        JLabel inputTitle1 = new JLabel("Input slang to remove it from dictionary: ");
+        inputTitle1.setFont(new Font("Times New Roman", Font.BOLD, 25));
+
+        JTextField inputField1 = new JTextField(50);
+        inputField1.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+
+        JTextArea textArea = new JTextArea(30, 67);
+        JScrollPane answerField = new JScrollPane(textArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
+        JPanel textField = new JPanel();
+        textField.add(answerField, BorderLayout.CENTER);
+
+        JPanel input = new JPanel(new FlowLayout());
+        input.setBackground(bgColor);
+
+        input.add(inputTitle1);
+        input.add(inputField1);
+        input.add(textField);
+
+        textArea.setText(null);
+        textArea.append("Inputing slang word to remove...\n");
+        inputField1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                textArea.setText(null);
+
+                String text = inputField1.getText();
+
+                if (!text.isEmpty() && !text.contains("__")) {
+                    TreeMap<String, ArrayList<String>> duplicatedDictionary = new TreeMap<>();
+                    if (slangDictionary.searchBySlang(dictionary, duplicatedDictionary, text)) {
+                        textArea.append("Slang had been found!!!\n");
+                        JLabel inputTitle2 = new JLabel("Do you want to remove it?");
+                        inputTitle2.setFont(new Font("Times New Roman", Font.BOLD, 25));
+
+                        JButton yes = new JButton("YES");
+                        yes.setFont(new Font("Times New Roman", Font.BOLD, 20));
+                        JButton no = new JButton("NO");
+                        no.setFont(new Font("Times New Roman", Font.BOLD, 20));
+
+                        input.removeAll();
+                        input.revalidate();
+                        input.repaint();
+
+                        input.add(inputTitle2);
+                        input.add(yes);
+                        input.add(no);
+                        input.add(textField);
+
+                        yes.addActionListener(new ActionListener() {
+                            public void actionPerformed(ActionEvent e) {
+                                textArea.append("Removing slang...\n");
+                                dictionary.remove(text);
+                                textArea.setText("Removing slang successfully");
+                            }
+                        });
+
+                        no.addActionListener(new ActionListener() {
+                            public void actionPerformed(ActionEvent e) {
+                                textArea.append("Cancel removing slang\n");
+                            }
+                        });
+                    } else {
+                        textArea.append("This slang doesn't exist in the dictionary\n");
+                        textArea.append("Cannot remove\n");
+                        inputField1.setText(null);
+                    }
+                } else {
+                    textArea.setText("Slang is invalid typing");
+                }
+            }
+        });
+        page.add(input, BorderLayout.CENTER);
+    }
+
+    private static void contentEditPage(JPanel page) {
+        JLabel inputTitle1 = new JLabel("Input slang to edit its definitions: ");
+        inputTitle1.setFont(new Font("Times New Roman", Font.BOLD, 25));
+
+        JTextField inputField1 = new JTextField(50);
+        inputField1.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+
+        JTextArea textArea = new JTextArea(30, 67);
+        JScrollPane answerField = new JScrollPane(textArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
+        JPanel textField = new JPanel();
+        textField.add(answerField, BorderLayout.CENTER);
+
+        JPanel input = new JPanel(new FlowLayout());
+        input.setBackground(bgColor);
+
+        input.add(inputTitle1);
+        input.add(inputField1);
+        input.add(textField);
+
+        textArea.setText(null);
+        textArea.append("Inputing slang word to edit...\n");
+        inputField1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                textArea.setText(null);
+
+                String text = inputField1.getText();
+
+                if (!text.isEmpty() && !text.contains("__")) {
+                    TreeMap<String, ArrayList<String>> duplicatedDictionary = new TreeMap<>();
+                    if (slangDictionary.searchBySlang(dictionary, duplicatedDictionary, text)) {
+                        textArea.append("Slang had been found!!!\n");
+                        JLabel inputTitle2 = new JLabel(
+                                "Input new definitions (Each definition is separated by ;): ");
+                        inputTitle2.setFont(new Font("Times New Roman", Font.BOLD, 25));
+
+                        JTextField inputField2 = new JTextField(50);
+                        inputField2.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+
+                        input.removeAll();
+                        input.revalidate();
+                        input.repaint();
+
+                        input.add(inputTitle2);
+                        input.add(inputField2);
+                        input.add(textField);
+
+                        textArea.append("Editing definitions for the slang...\n");
+                        inputField2.addActionListener(new ActionListener() {
+                            public void actionPerformed(ActionEvent e) {
+                                ArrayList<String> definition = new ArrayList<>();
+                                String def = inputField2.getText();
+                                String[] defList = def.split(";");
+                                for (int i = 0; i < defList.length; i++) {
+                                    definition.add(defList[i]);
+                                }
+
+                                dictionary.put(text, definition);
+                                textArea.setText("Edit slang definitions successfully!!!");
+                                inputField2.setText(null);
+                            }
+                        });
+                    } else {
+                        textArea.append("This slang doesn't exist in the dictionary\n");
+                        textArea.append("Cannot edit\n");
+                        inputField1.setText(null);
+                    }
+                } else {
+                    textArea.setText("Slang is invalid typing");
+                }
+            }
+        });
+        page.add(input, BorderLayout.CENTER);
+    }
+
+    private static void contentRandomeSlangPage(JPanel page) {
+        JLabel inputTitle1 = new JLabel("Click to see on this day slang word: ");
+        inputTitle1.setFont(new Font("Times New Roman", Font.BOLD, 25));
+
+        JButton button = new JButton("Release");
+        button.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+
+        JTextArea textArea = new JTextArea(30, 67);
+        JScrollPane answerField = new JScrollPane(textArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
+        JPanel textField = new JPanel();
+        textField.add(answerField, BorderLayout.CENTER);
+
+        JPanel input = new JPanel(new FlowLayout());
+        input.setBackground(bgColor);
+
+        input.add(inputTitle1);
+        input.add(button);
+        input.add(textField);
+
+        textArea.setText(null);
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                textArea.setText(null);
+                textArea.append("This day slang word is:\n");
+                TreeMap<String, ArrayList<String>> random = new TreeMap<>();
+                random = slangDictionary.randomSlang(dictionary);
+                textArea.append("Slang: " + random.firstKey() + "\n");
+                for (int i = 0; i < random.get(random.firstKey()).size(); i++) {
+                    textArea.append("- Definition " + (i + 1) + ": " + random.get(random.firstKey()).get(i) + "\n");
+                }
+            }
+        });
+        page.add(input, BorderLayout.CENTER);
+    }
+
+    private static void contentQuizOnSlangPage(JPanel page) {
+        JLabel inputTitle1 = new JLabel("Click to start quiz on slang: ");
+        inputTitle1.setFont(new Font("Times New Roman", Font.BOLD, 25));
+
+        JButton button = new JButton("Start");
+        button.setFont(new Font("Times New Roman", Font.PLAIN, 20));
+
+        JPanel input = new JPanel(new GridLayout(3, 1));
+        input.setBackground(bgColor);
+
+        JPanel label = new JPanel(new FlowLayout());
+        label.add(inputTitle1);
+        label.add(button);
+
+        input.add(label);
+
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                input.removeAll();
+                input.revalidate();
+                input.repaint();
+
+                input.add(label);
+
+                TreeMap<String, ArrayList<String>> answerSlang = new TreeMap<>();
+                TreeMap<String, ArrayList<String>> wrongSlang_1 = new TreeMap<>();
+                TreeMap<String, ArrayList<String>> wrongSlang_2 = new TreeMap<>();
+                TreeMap<String, ArrayList<String>> wrongSlang_3 = new TreeMap<>();
+
+                answerSlang = slangDictionary.randomSlang(dictionary);
+                wrongSlang_1 = slangDictionary.randomSlang(dictionary);
+                wrongSlang_2 = slangDictionary.randomSlang(dictionary);
+                wrongSlang_3 = slangDictionary.randomSlang(dictionary);
+
+                TreeMap<String, ArrayList<String>> mixSlang = new TreeMap<>();
+                mixSlang.put(answerSlang.firstKey(), answerSlang.get(answerSlang.firstKey()));
+                mixSlang.put(wrongSlang_1.firstKey(), wrongSlang_1.get(wrongSlang_1.firstKey()));
+                mixSlang.put(wrongSlang_2.firstKey(), wrongSlang_2.get(wrongSlang_2.firstKey()));
+                mixSlang.put(wrongSlang_3.firstKey(), wrongSlang_3.get(wrongSlang_3.firstKey()));
+
+                JLabel question = new JLabel("What is the definitions of " + answerSlang.firstKey() + " ?");
+                question.setFont(new Font("Times New Roman", Font.BOLD, 30));
+                question.setForeground(Color.RED);
+                JPanel answerSpace = new JPanel(new GridLayout(2, 2));
+
+                for (String slang : mixSlang.keySet()) {
+                    String def = "";
+                    for (int i = 0; i < mixSlang.get(slang).size(); i++) {
+                        def += mixSlang.get(slang).get(i);
+                    }
+                    JButton chooseButton = new JButton(def);
+                    chooseButton.setFont(new Font("Times New Roman", Font.PLAIN, 20));
+                    answerSpace.add(chooseButton);
+                }
+
+                JPanel quiz = new JPanel();
+
             }
         });
 
